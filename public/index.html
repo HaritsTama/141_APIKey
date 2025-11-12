@@ -26,7 +26,6 @@
       overflow: hidden;
     }
 
-    /* CRT Effect */
     body::before {
       content: "";
       position: absolute;
@@ -45,7 +44,7 @@
       z-index: 1;
     }
 
-    /* Scanline effect */
+
     body::after {
       content: "";
       position: absolute;
@@ -232,7 +231,6 @@
       animation: blink 1s infinite;
     }
 
-    /* Matrix-like background effect */
     @keyframes flicker {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.8; }
@@ -273,20 +271,16 @@
     const copyBtn = document.getElementById('copyBtn');
     const errorMsg = document.getElementById('errorMsg');
 
-    // Generate API Key dari server
     generateBtn.addEventListener('click', async () => {
       try {
-        // Reset tombol copy
         copyBtn.textContent = '[ COPY TO CLIPBOARD ]';
         copyBtn.disabled = false;
-        
-        // Disable button saat loading
+
         generateBtn.disabled = true;
         generateBtn.textContent = '[ PROCESSING... ]';
         errorMsg.textContent = '';
         apiKeyArea.value = '>>> GENERATING KEY...';
 
-        // Request ke server
         const response = await fetch('/create', {
           method: 'POST',
           headers: {
@@ -297,7 +291,6 @@
         const data = await response.json();
 
         if (data.success) {
-          // Tampilkan API key langsung (sudah ada prefix dari server)
           apiKeyArea.value = data.apiKey;
           errorMsg.textContent = '';
         } else {
@@ -308,13 +301,11 @@
         apiKeyArea.value = '';
         errorMsg.textContent = '!!! SYSTEM ERROR: ' + error.message;
       } finally {
-        // Enable button kembali
         generateBtn.disabled = false;
         generateBtn.textContent = '[ GENERATE ]';
       }
     });
 
-    // Copy API Key
     copyBtn.addEventListener('click', () => {
       if (apiKeyArea.value.trim() === "" || apiKeyArea.value.includes('AWAITING') || apiKeyArea.value.includes('GENERATING')) {
         errorMsg.textContent = '!!! NO KEY TO COPY';
@@ -328,7 +319,6 @@
       setTimeout(() => copyBtn.textContent = '[ COPY TO CLIPBOARD ]', 2000);
     });
 
-    // Add typing sound effect simulation (optional visual feedback)
     apiKeyArea.addEventListener('input', function() {
       this.style.boxShadow = '0 0 20px #0f0, inset 0 0 20px rgba(0, 255, 0, 0.2)';
       setTimeout(() => {

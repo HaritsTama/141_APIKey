@@ -4,31 +4,25 @@ const crypto = require('crypto');
 const app = express();
 const port = 3000;
 
-// Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Simulasi database untuk menyimpan API keys yang valid
-// Dalam produksi, gunakan database seperti MongoDB, PostgreSQL, etc.
 const validApiKeys = new Set();
 
-// Route untuk halaman utama
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Endpoint untuk generate API key
 app.post('/create', (req, res) => {
   try {
     const randomKey = crypto.randomBytes(32).toString('hex');
     const fullApiKey = `sk-itumy-v1-api_${randomKey}`;
-    
-    // Simpan ke "database" (Set)
+
     validApiKeys.add(fullApiKey);
     
     res.json({
       success: true,
-      apiKey: fullApiKey,  // Langsung return dengan prefix
+      apiKey: fullApiKey,
       message: 'API Key berhasil dibuat'
     });
   } catch (error) {
@@ -40,12 +34,10 @@ app.post('/create', (req, res) => {
   }
 });
 
-// Endpoint untuk cek validasi API key
 app.post('/checkapi', (req, res) => {
   try {
     const { apikey } = req.body;
-    
-    // Validasi input
+
     if (!apikey) {
       return res.status(400).json({
         success: false,
@@ -54,7 +46,6 @@ app.post('/checkapi', (req, res) => {
       });
     }
 
-    // Cek format API key
     if (!apikey.startsWith('sk-itumy-v1-api_')) {
       return res.status(400).json({
         success: false,
@@ -63,7 +54,6 @@ app.post('/checkapi', (req, res) => {
       });
     }
 
-    // Cek apakah API key ada di database
     const isValid = validApiKeys.has(apikey);
 
     if (isValid) {
@@ -93,7 +83,6 @@ app.post('/checkapi', (req, res) => {
   }
 });
 
-// Endpoint untuk melihat semua API keys yang valid (untuk testing)
 app.get('/apikeys', (req, res) => {
   res.json({
     success: true,
